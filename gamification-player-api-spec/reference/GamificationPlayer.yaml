@@ -1,0 +1,2817 @@
+openapi: 3.0.3
+info:
+  title: GamificationPlayer
+  version: '1.0'
+  description: API of the Gamification Player and Fittar Playground for interacting with other applications.
+  contact:
+    email: developers@gamificationplayer.app
+    name: Dick van der Heiden
+    url: 'https://games.4growth.com/contact/'
+  license:
+    name: Proprietary
+    url: 'https://games.4growth.com/contact/'
+servers:
+  - url: 'https://api.gamificationplayer.eu/v1'
+    description: Gamification Player - Staging
+  - url: 'https://api.gamificationplayer.app/v1'
+    description: Gamification Player - Production
+  - url: 'https://api.fittarplayground.eu/v1'
+    description: Fittar Playground - Staging
+  - url: 'https://api.fittarplayground.app/v1'
+    description: Fittar Playground - Production
+  - url: 'https://api.learnstrike.eu/v1'
+    description: Learnstrike - Staging
+  - url: 'https://api.learnstrike.app/v1'
+    description: Learnstrike - Production
+paths:
+  /games:
+    get:
+      summary: Get games
+      tags:
+        - Games
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Game'
+                required:
+                  - data
+      operationId: get-games
+      description: Returns a list of available games.
+  '/games/{gameId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: gameId
+        in: path
+        required: true
+        description: ID of the game
+    get:
+      summary: Get game
+      tags:
+        - Games
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Game'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      operationId: get-game
+      description: Returns the game by its id.
+  '/games/{gameId}/progress':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: gameId
+        in: path
+        required: true
+        description: ID of the game
+    get:
+      summary: Get game progress
+      tags:
+        - Games
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GameProgress'
+                required:
+                  - data
+      operationId: get-game-progress
+      description: Returns the game progress.
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: 'filter[user]'
+          description: ID of a user
+        - schema:
+            type: boolean
+          in: query
+          name: 'filter[completed]'
+          description: Set to 1 to only return completed progress
+  '/challenges/{challengeId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: challengeId
+        in: path
+        required: true
+        description: ID of the challenge
+    get:
+      summary: Get challenge
+      tags:
+        - Challenges
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Challenge'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      operationId: get-challenge
+      description: Returns the challenge by its id.
+  /challenge-sessions:
+    get:
+      summary: Get challenge sessions
+      tags:
+        - ChallengeSessions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChallengeSession'
+                required:
+                  - data
+      operationId: get-challenge-sessions
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: 'filter[challenge_id]'
+          description: ID of the challenge
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: 'filter[user_id]'
+          description: ID of the user
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: 'filter[started_at]'
+          description: Date (Y-m-d) after which the session has started
+      description: Returns a list of challenge sessions according to at least one filter parameter.
+  '/challenge-sessions/{challengeSessionId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: challengeSessionId
+        in: path
+        required: true
+        description: ID of the challenge session
+    get:
+      summary: Get challenge session
+      tags:
+        - ChallengeSessions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ChallengeSession'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      operationId: get-challenge-session
+      description: Returns the challenge session by its id.
+    patch:
+      summary: Update challenge session
+      operationId: patch-challenge-session
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ChallengeSession'
+                required:
+                  - data
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      tags:
+        - ChallengeSessions
+      description: Update the challenge session.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/ChallengeSessionUpdateRequest'
+              required:
+                - data
+            examples: {}
+  /device-login:
+    post:
+      summary: Announce device login
+      operationId: post-device-flow
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DeviceLogin'
+                required:
+                  - data
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - data
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      tags:
+        - DeviceFlow
+      description: Announce device flow
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  required:
+                    - type
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - device_login
+                    attributes:
+                      type: object
+                      properties:
+                        organisation_id:
+                          type: string
+                          format: uuid
+              required:
+                - data
+    parameters: []
+  '/device-login/{deviceLoginId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: deviceLoginId
+        in: path
+        required: true
+        description: ID of the device login announcement
+    get:
+      summary: Get device login status
+      operationId: get-device-flow-deviceFlowId
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DeviceLogin'
+                required:
+                  - data
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - data
+        '410':
+          description: Gone
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - data
+      description: Returns the device flow status.
+      tags:
+        - DeviceFlow
+  /module-sessions:
+    get:
+      summary: Get module sessions
+      tags:
+        - ModuleSessions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ModuleSession'
+                required:
+                  - data
+      operationId: get-module-sessions
+      description: Returns a list of module sessions according to at least one filter parameter.
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: 'filter[module_id]'
+          description: ID of the module
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: 'filter[user_id]'
+          description: ID of the user
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: 'filter[challenge_session_id]'
+          description: ID of the challenge
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: 'filter[started_at]'
+          description: Date (Y-m-d) after which the session has started
+  '/module-sessions/{moduleSessionId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: moduleSessionId
+        in: path
+        required: true
+        description: ID of the module session
+    get:
+      summary: Get module session
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ModuleSession'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      operationId: get-module-session
+      description: Returns the module session by its id.
+      tags:
+        - ModuleSessions
+    patch:
+      summary: Update module session
+      operationId: patch-module-session
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ModuleSession'
+                required:
+                  - data
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Update the module session.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/ModuleSessionUpdateRequest'
+              required:
+                - data
+            examples: {}
+      tags:
+        - ModuleSessions
+  /organisations:
+    post:
+      summary: Create organisation
+      operationId: create-organisation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Organisation'
+                required:
+                  - data
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/OrganisationStoreRequest'
+              required:
+                - data
+      tags:
+        - Organisations
+      description: Creates a new organisation.
+    parameters: []
+    get:
+      summary: Get organisations
+      operationId: get-organisations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Organisation'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+      tags:
+        - Organisations
+      description: Returns the organisations the API key has access to.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: 'filter[name]'
+          description: Name of the organisation
+        - schema:
+            type: string
+          in: query
+          name: 'filter[subdomain]'
+          description: Subdomain of the organisation
+    patch:
+      summary: Update organisation
+      operationId: patch-organisation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Organisation'
+                required:
+                  - data
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      tags:
+        - Organisations
+      description: Update the organisation.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/OrganisationUpdateRequest'
+              required:
+                - data
+  '/organisations/{organisationId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
+    get:
+      summary: Get organisation
+      tags:
+        - Organisations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OrganisationWithSettings'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      operationId: get-organisation
+      description: Returns the organisation
+  '/organisations/{organisationId}/users':
+    post:
+      summary: Create user
+      operationId: create-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+                required:
+                  - data
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Creates a new user or returns the existing one.
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/UserStoreRequest'
+              required:
+                - data
+            examples: {}
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
+    get:
+      summary: Get users
+      operationId: get-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Returns the users of the organisations the API key has access to.
+      tags:
+        - Users
+      parameters:
+        - schema:
+            type: string
+            format: email
+          in: query
+          name: 'filter[email]'
+          description: E-mail address of the user
+        - schema:
+            type: string
+          in: query
+          name: 'filter[name]'
+          description: Name of the user
+  '/organisations/{organisationId}/users/{userId}/statistics':
+    get:
+      summary: Get user statistics
+      operationId: get-user-statistics
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatistics'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Returns the statistics of a user of the organisations the API key has access to.
+      tags:
+        - Users
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
+      - schema:
+          type: string
+          format: uuid
+        name: userId
+        in: path
+        required: true
+        description: ID of the user
+  '/organisations/{organisationId}/users/{userId}/battles/invitations':
+    get:
+      summary: Get open battle invitations for users
+      operationId: get-user-battle-invitations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BattleSession'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Returns the open invitations in the active battle for a user.
+      tags:
+        - Battles
+        - Users
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
+      - schema:
+          type: string
+          format: uuid
+        name: userId
+        in: path
+        required: true
+        description: ID of the user
+  '/organisations/{organisationId}/micro-games':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
+    get:
+      summary: Get micro games for organisation
+      operationId: get-organisation-micro-games
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MicroGame'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Returns the micro games of an organisation that the API key has access to.
+      parameters: []
+      tags:
+        - MicroGames
+  '/organisations/{organisationId}/battles/active':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
+    get:
+      summary: Get active battle for organisation
+      operationId: get-organisation-battles-active
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Battle'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: No active battle
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Returns the active battle of an organisation that the API key has access to.
+      parameters: []
+      tags:
+        - Battles
+  /micro-games:
+    parameters: []
+    get:
+      summary: Get micro games
+      operationId: get-micro-games
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MicroGame'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Returns the micro games.
+      parameters: []
+      tags:
+        - MicroGames
+  '/micro-games/{microGameId}':
+    parameters:
+      - schema:
+          type: string
+        name: microGameId
+        in: path
+        required: true
+        description: ID of the micro game
+    get:
+      summary: Get micro game
+      operationId: get-micro-game
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MicroGame'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Returns a micro game
+      parameters: []
+      tags:
+        - MicroGames
+  '/organisations/{organisationId}/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: userId
+        in: path
+        required: true
+        description: ID of the user
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
+    delete:
+      summary: Delete user
+      operationId: delete-user
+      responses:
+        '204':
+          description: No Content
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  '':
+                    $ref: '#/components/schemas/Error'
+                required:
+                  - ''
+      tags:
+        - Users
+      description: Removes the user from the organisation.
+  '/organisations/{organisationId}/users/{userId}/login-token':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: userId
+        in: path
+        required: true
+        description: ID of the user
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
+    get:
+      summary: Get login token
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/LoginToken'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      operationId: get-users-login-token
+      description: Returns the login token for the user.
+      parameters: []
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: userId
+        in: path
+        required: true
+        description: ID of the user
+    get:
+      summary: Get user
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      operationId: get-user
+      description: Returns the user by its id.
+    patch:
+      summary: Update user
+      operationId: patch-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+                required:
+                  - data
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+      description: Update the user by its id.
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/UserUpdateRequest'
+              required:
+                - data
+        description: ''
+  /time:
+    get:
+      summary: Get time
+      tags:
+        - Time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Time'
+                required:
+                  - data
+        '401':
+          description: Unauthorized
+      operationId: get-time
+      description: Returns the time on the server.
+  /app-scores:
+    post:
+      summary: Post app score
+      operationId: post-app-scores
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AppScore'
+      description: Register a score achieved in a micro game
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/AppScoreStoreRequest'
+      tags:
+        - MicroGames
+components:
+  schemas:
+    Challenge:
+      title: Challenge
+      type: object
+      x-tags:
+        - Challenges
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - name
+            - game_id
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            sort_order:
+              type: integer
+              minimum: 0
+            game_id:
+              type: string
+              format: uuid
+      required:
+        - id
+        - type
+        - attributes
+    GameProgress:
+      title: GameProgress
+      type: object
+      x-stoplight:
+        id: 78b79422fe35b
+      x-tags:
+        - Games
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - score
+            - bonus
+            - completed_at
+          properties:
+            score:
+              type: integer
+            bonus:
+              type: integer
+            completed_at:
+              type: string
+              format: date-time
+      required:
+        - id
+        - type
+        - attributes
+    ChallengeIdentifier:
+      title: ChallengeIdentifier
+      type: object
+      x-tags:
+        - Challenges
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - challenge
+          readOnly: true
+      required:
+        - id
+        - type
+    ChallengeSession:
+      title: ChallengeSession
+      type: object
+      x-tags:
+        - ChallengeSessions
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - challenge_session
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - started_at
+          properties:
+            started_at:
+              type: string
+              format: date-time
+            ended_at:
+              type: string
+              format: date-time
+              nullable: true
+            completed_at:
+              type: string
+              format: date-time
+              nullable: true
+            score:
+              type: integer
+              default: 0
+        relationships:
+          type: object
+          required:
+            - user
+            - challenge
+          properties:
+            user:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  $ref: '#/components/schemas/UserIdentifier'
+            challenge:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  $ref: '#/components/schemas/ChallengeIdentifier'
+      required:
+        - id
+        - attributes
+        - relationships
+    ChallengeSessionIdentifier:
+      title: ChallengeSessionIdentifier
+      type: object
+      x-tags:
+        - ChallengeSessions
+      description: ''
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - challenge_session
+          readOnly: true
+      required:
+        - id
+    ChallengeSessionUpdateRequest:
+      title: ChallengeSessionUpdateRequest
+      type: object
+      description: ''
+      x-tags:
+        - ChallengeSessions
+      properties:
+        type:
+          type: string
+          enum:
+            - challenge_session
+        attributes:
+          type: object
+          properties:
+            ended_at:
+              type: string
+              format: date-time
+              nullable: true
+            completed_at:
+              type: string
+              format: date-time
+              nullable: true
+      required:
+        - type
+        - attributes
+    DeviceLogin:
+      title: DeviceLogin
+      x-stoplight:
+        id: 6bl4k08rd2ft9
+      type: object
+      x-tags:
+        - DeviceFlow
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - device_login
+        attributes:
+          type: object
+          required:
+            - is_validated
+            - expired_at
+            - url
+          properties:
+            is_validated:
+              type: boolean
+              default: false
+              readOnly: true
+            expired_at:
+              type: string
+              format: date-time
+              readOnly: true
+            user_id:
+              type: string
+              format: uuid
+              readOnly: true
+            organisation_id:
+              type: string
+              format: uuid
+              readOnly: true
+            url:
+              type: string
+              readOnly: true
+      required:
+        - id
+        - type
+        - attributes
+    Error:
+      title: Error
+      type: object
+      properties:
+        title:
+          type: string
+        source:
+          type: object
+          properties:
+            pointer:
+              type: string
+        detail:
+          type: string
+        status:
+          type: string
+      required:
+        - title
+    Game:
+      title: Game
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - game
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            sort_order:
+              type: integer
+              minimum: 0
+      required:
+        - id
+        - attributes
+      x-tags:
+        - Games
+      description: ''
+    Module:
+      title: Module
+      type: object
+      x-tags:
+        - Modules
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - module
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - type
+            - name
+            - sort_order
+          properties:
+            type:
+              type: string
+            name:
+              type: string
+            description:
+              type: string
+            score_factor:
+              type: integer
+            sort_order:
+              type: integer
+      required:
+        - id
+        - type
+        - attributes
+    ModuleIdentifier:
+      title: ModuleIdentifier
+      type: object
+      x-tags:
+        - Modules
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - module
+          readOnly: true
+      required:
+        - id
+        - type
+    ModuleSession:
+      title: ModuleSession
+      type: object
+      x-tags:
+        - ModuleSessions
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - module_session
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - started_at
+            - score
+          properties:
+            started_at:
+              type: string
+              format: date-time
+            ended_at:
+              type: string
+              format: date-time
+              nullable: true
+            completed_at:
+              type: string
+              format: date-time
+              nullable: true
+            score:
+              type: integer
+              default: 0
+            extra_data:
+              type: object
+              nullable: true
+        relationships:
+          type: object
+          required:
+            - challenge_session
+            - module
+          properties:
+            challenge_session:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  $ref: '#/components/schemas/ChallengeSessionIdentifier'
+            module:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  $ref: '#/components/schemas/ModuleIdentifier'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
+    ModuleSessionUpdateRequest:
+      title: ModuleSessionUpdateRequest
+      type: object
+      description: ''
+      x-tags:
+        - ModuleSessions
+      properties:
+        type:
+          type: string
+          enum:
+            - module_session
+        attributes:
+          type: object
+          properties:
+            ended_at:
+              type: string
+              format: date-time
+              nullable: true
+            completed_at:
+              type: string
+              nullable: true
+              format: date-time
+            score:
+              type: integer
+              minimum: 0
+            extra_data:
+              type: object
+      required:
+        - type
+        - attributes
+    Organisation:
+      title: Organisation
+      type: object
+      x-tags:
+        - Organisations
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - organisation
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - name
+            - subdomain
+            - default_language
+            - available_languages
+          properties:
+            name:
+              type: string
+              readOnly: true
+            subdomain:
+              type: string
+              readOnly: true
+            default_language:
+              type: string
+            available_languages:
+              type: array
+              items:
+                type: string
+            logo:
+              type: string
+              x-stoplight:
+                id: vpugxe6fchwma
+              format: uri
+              nullable: true
+              readOnly: true
+            background_image:
+              type: string
+              x-stoplight:
+                id: rcx47fenkxoni
+              format: uri
+              nullable: true
+              readOnly: true
+            background_mobile_image:
+              type: string
+              x-stoplight:
+                id: cdlyo7bm2xrz9
+              format: uri
+              nullable: true
+              readOnly: true
+            background_tablet_image:
+              type: string
+              x-stoplight:
+                id: cdlyo7bm2xrz9
+              format: uri
+              nullable: true
+              readOnly: true
+            background_desktop_image:
+              type: string
+              x-stoplight:
+                id: cdlyo7bm2xrz9
+              format: uri
+              nullable: true
+              readOnly: true
+            primary_color:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            secondary_color:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            accent_color:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            background_color:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            card_background_color:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            primary_font_color:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            secondary_font_color:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            primary_font_family:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            secondary_font_family:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            card_border_radius:
+              type: integer
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            registration_enabled:
+              type: boolean
+              x-stoplight:
+                id: 8blww2wsx0cti
+              readOnly: true
+            anonymous_enabled:
+              type: boolean
+              x-stoplight:
+                id: 8blww2wsx0cti
+              readOnly: true
+            allow_upgrade_ro_registered_user:
+              type: boolean
+              x-stoplight:
+                id: 8blww2wsx0cti
+              readOnly: true
+            reseller_enabled:
+              type: boolean
+              x-stoplight:
+                id: 8blww2wsx0cti
+              readOnly: true
+            introduction:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            webhook_url:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            webhook_events:
+              type: array
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              items:
+                x-stoplight:
+                  id: weea6xdrxp2l2
+                type: string
+              readOnly: true
+            timezone:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            ios_app_url:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              format: uri
+              nullable: true
+              readOnly: true
+            android_app_url:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              format: uri
+              nullable: true
+              readOnly: true
+            branchio_url:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              format: uri
+              nullable: true
+              readOnly: true
+            opengraph_image:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              format: uri
+              nullable: true
+              readOnly: true
+            opengraph_description:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+      required:
+        - id
+        - type
+        - attributes
+    OrganisationWithSettings:
+      title: Organisation
+      type: object
+      x-tags:
+        - Organisations
+      description: ''
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - organisation
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - name
+            - subdomain
+            - default_language
+            - available_languages
+          properties:
+            name:
+              type: string
+              readOnly: true
+            subdomain:
+              type: string
+              readOnly: true
+            default_language:
+              type: string
+            available_languages:
+              type: array
+              items:
+                type: string
+            logo:
+              type: string
+              format: uri
+            primary_color:
+              type: string
+            secondary_color:
+              type: string
+            accent_color:
+              type: string
+            primary_font_family:
+              type: string
+            secondary_font_family:
+              type: string
+            primary_font_color:
+              type: string
+            secondary_font_color:
+              type: string
+            background_color:
+              type: string
+            background_image:
+              type: string
+              format: uri
+            background_mobile_image:
+              type: string
+              format: uri
+              description: 'If null, background_image should be used'
+            background_tablet_image:
+              type: string
+              format: uri
+              description: 'If null, background_image should be used'
+            background_desktop_image:
+              type: string
+              format: uri
+              description: 'If null, background_image should be used'
+            card_background_color:
+              type: string
+            card_border_radius:
+              type: string
+            open_graph_image:
+              type: string
+              format: uri
+            open_graph_description:
+              type: string
+            registration_enabled:
+              type: boolean
+              default: false
+            anonymous_enabled:
+              type: boolean
+              default: false
+            introduction:
+              type: string
+              description: Introduction text on the dashboard. Some basic HTML element are allowed.
+            webhook_url:
+              type: string
+              format: uri
+      required:
+        - id
+        - type
+        - attributes
+    OrganisationIdentifier:
+      title: OrganisationIdentifier
+      type: object
+      x-tags:
+        - Organisations
+      description: ''
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - organisation
+          readOnly: true
+      required:
+        - id
+        - type
+    OrganisationStoreRequest:
+      title: OrganisationStoreRequest
+      type: object
+      x-tags:
+        - Organisations
+      properties:
+        type:
+          type: string
+          enum:
+            - organisation
+        attributes:
+          type: object
+          required:
+            - name
+            - subdomain
+            - default_language
+            - ios_app_url
+            - android_app_url
+          properties:
+            name:
+              type: string
+            subdomain:
+              type: string
+            webhook_url:
+              type: string
+              format: uri
+            webhook_secret:
+              type: string
+            primary_color:
+              type: string
+            registration_enabled:
+              type: boolean
+            anonymous_enabled:
+              type: boolean
+            introduction:
+              type: string
+            default_language:
+              type: string
+              default: nl
+            available_languages:
+              type: array
+              items:
+                type: string
+            reseller_id:
+              type: string
+              format: uuid
+            ios_app_url:
+              type: string
+              x-stoplight:
+                id: ops5lbfr87tp9
+              format: uri
+            android_app_url:
+              type: string
+              x-stoplight:
+                id: qnblgheksli17
+              format: uri
+            branchio_url:
+              type: string
+              x-stoplight:
+                id: g8ct95kx7gdhx
+              format: uri
+      required:
+        - type
+        - attributes
+    OrganisationUpdateRequest:
+      title: OrganisationStoreRequest
+      type: object
+      x-tags:
+        - Organisations
+      properties:
+        type:
+          type: string
+          enum:
+            - organisation
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            subdomain:
+              type: string
+            webhook_url:
+              type: string
+              format: uri
+            webhook_secret:
+              type: string
+            primary_color:
+              type: string
+            registration_enabled:
+              type: boolean
+            anonymous_enabled:
+              type: boolean
+            introduction:
+              type: string
+            ios_app_url:
+              type: string
+              x-stoplight:
+                id: di1v7g273h1xx
+              format: uri
+            android_app_url:
+              type: string
+              x-stoplight:
+                id: 6tph33i4dgc6f
+              format: uri
+            branchio_url:
+              type: string
+              x-stoplight:
+                id: hqz7mjc1sk3ha
+              format: uri
+      required:
+        - type
+        - attributes
+    User:
+      title: User
+      type: object
+      description: ''
+      x-tags:
+        - Users
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - user
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - name
+            - email
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+            language:
+              description: Preferred languages of the user
+              type: array
+              items:
+                type: string
+            password:
+              type: string
+              writeOnly: true
+            login_token:
+              type: string
+              readOnly: true
+            sso_identities:
+              type: array
+              readOnly: true
+              items:
+                type: object
+                properties:
+                  sso_configuration_id:
+                    type: string
+                    format: uuid
+                  idp_id:
+                    type: string
+            avatar:
+              type: string
+              format: url
+              readOnly: true
+        relationships:
+          type: object
+          properties:
+            tags:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TagIdentifier'
+      required:
+        - id
+        - type
+        - attributes
+    TagIdentifier:
+      title: TagIdentifier
+      type: object
+      description: ''
+      x-tags:
+        - Tags
+      properties:
+        name:
+          type: string
+          readOnly: true
+    UserIdentifier:
+      title: UserIdentifier
+      type: object
+      description: ''
+      x-tags:
+        - Users
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        type:
+          type: string
+          enum:
+            - user
+          readOnly: true
+      required:
+        - id
+        - type
+    UserStoreRequest:
+      title: UserStoreRequest
+      type: object
+      description: ''
+      x-tags:
+        - Users
+      properties:
+        type:
+          type: string
+          enum:
+            - user
+        attributes:
+          type: object
+          required:
+            - email
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+            language:
+              type: string
+            password:
+              type: string
+        relationships:
+          type: object
+          properties:
+            memberships:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OrganisationIdentifier'
+      required:
+        - type
+        - attributes
+    UserUpdateRequest:
+      title: UserUpdateRequest
+      type: object
+      description: ''
+      x-tags:
+        - Users
+      properties:
+        type:
+          type: string
+          enum:
+            - user
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+            language:
+              type: string
+            password:
+              type: string
+        relationships:
+          type: object
+          properties:
+            memberships:
+              type: object
+              required:
+                - data
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/OrganisationIdentifier'
+          required:
+            - memberships
+      required:
+        - type
+        - attributes
+    LoginToken:
+      title: LoginToken
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - login_token
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - expired_at
+            - token
+          properties:
+            expired_at:
+              type: string
+              format: date-time
+              readOnly: true
+            token:
+              type: string
+              readOnly: true
+      required:
+        - type
+        - attributes
+      x-tags:
+        - Users
+    Time:
+      title: Time
+      x-stoplight:
+        id: 59wqv5jeahhcd
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - time
+          readOnly: true
+        attributes:
+          type: object
+          required:
+            - now
+          additionalProperties: false
+          properties:
+            now:
+              type: string
+              format: date-time
+              readOnly: true
+          readOnly: true
+      required:
+        - type
+        - attributes
+    MicroGame:
+      title: MicroGame
+      x-stoplight:
+        id: 3y66wxdnepser
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - micro_game
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            identifier:
+              type: string
+            star_thresholds:
+              type: array
+              minItems: 5
+              maxItems: 5
+              items:
+                type: integer
+                minimum: 0
+                maximum: 100
+            web_gl_location:
+              type: string
+            extra_data:
+              type: object
+              description: Not present on index endpoints.
+    AppScore:
+      title: AppScore
+      x-stoplight:
+        id: wlfizaeysmzt5
+      type: object
+      x-tags:
+        - App Score
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - app_score
+        attributes:
+          type: object
+          properties:
+            score:
+              type: integer
+              minimum: 0
+            started_at:
+              type: string
+              format: date-time
+            ended_at:
+              type: string
+              format: date-time
+              nullable: true
+            completed_at:
+              type: string
+              format: date-time
+              nullable: true
+            extra_data:
+              type: object
+        links:
+          type: object
+          properties:
+            show:
+              type: string
+              format: uri
+    AppScoreStoreRequest:
+      title: AppScoreStoreRequest
+      x-stoplight:
+        id: 3y0azng75e7p4
+      type: object
+      examples:
+        - type: app_score
+          attributes:
+            module_session_id: e541c672-de6a-43ad-acc3-06b5b7b84e84
+            started_at: '2019-08-24T14:15:22Z'
+            ended_at: '2019-08-24T14:15:22Z'
+            completed_at: '2019-08-24T14:15:22Z'
+            score: 0
+            extra_data: {}
+        - type: app_score
+          attributes:
+            user_id: a169451c-8525-4352-b8ca-070dd449a1a5
+            organisation_id: 9ec26450-a51e-40b1-a49f-e04045480fd5
+            micro_game_id: fc34f6d7-e2dc-44de-9545-c882eca68cc1
+            started_at: '2019-08-24T14:15:22Z'
+            ended_at: '2019-08-24T14:15:22Z'
+            completed_at: '2019-08-24T14:15:22Z'
+            score: 0
+            extra_data: {}
+        - type: app_score
+          attributes:
+            battle_session_id: fc34f6d7-e2dc-44de-9545-c882eca68cc1
+            user_id: a169451c-8525-4352-b8ca-070dd449a1a5
+            organisation_id: 9ec26450-a51e-40b1-a49f-e04045480fd5
+            started_at: '2019-08-24T14:15:22Z'
+            ended_at: '2019-08-24T14:15:22Z'
+            completed_at: '2019-08-24T14:15:22Z'
+            score: 0
+            extra_data: {}
+      properties:
+        type:
+          type: string
+          enum:
+            - app_score
+        attributes:
+          type: object
+          properties:
+            module_session_id:
+              type: string
+              format: uuid
+              description: Prohibited when battle_session_id is filled
+            battle_session_id:
+              type: string
+              format: uuid
+              description: Prohibited when module_session_id is filled
+            user_id:
+              type: string
+              format: uuid
+              description: Prohibited when module_session_id is filled
+            organisation_id:
+              type: string
+              format: uuid
+              description: Prohibited when module_session_id is filled
+            micro_game_id:
+              type: string
+              format: uuid
+              description: Prohibited when module_session_id or battle_session_id is filled
+            started_at:
+              type: string
+              format: date-time
+              description: Prohibited when module_session_id is filled
+            ended_at:
+              type: string
+              format: date-time
+              nullable: true
+            completed_at:
+              type: string
+              format: date-time
+              nullable: true
+            score:
+              type: integer
+              minimum: 0
+            extra_data:
+              type: object
+              nullable: true
+    Battle:
+      title: Battle
+      type: object
+      x-tags:
+        - Battles
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - battle
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            game_id:
+              type: string
+              format: uuid
+            available_from:
+              type: string
+              format: date-time
+              nullable: true
+            available_till:
+              type: string
+              format: date-time
+              nullable: true
+    BattleSession:
+      title: Battle session
+      type: object
+      x-tags:
+        - Battles
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - battle_session
+        attributes:
+          type: object
+          properties:
+            initiator_user_id:
+              type: string
+              format: uuid
+            opponent_user_id:
+              type: string
+              format: uuid
+            micro_game_id:
+              type: string
+              format: uuid
+            initiator_score:
+              type: integer
+              nullable: true
+            opponent_score:
+              type: integer
+              nullable: true
+            created_at:
+              type: string
+              format: date-time
+            expires_at:
+              type: string
+              format: date-time
+    UserStatistics:
+      title: User statistics
+      type: object
+      x-tags:
+        - Users
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - user_statistics
+        attributes:
+          type: object
+          properties:
+            score:
+              type: integer
+            bonus_score:
+              type: integer
+            battle_score:
+              type: integer
+    UserTags:
+      title: User tags
+      type: object
+      x-tags:
+        - Users
+      properties:
+        name:
+          type: string
+  securitySchemes:
+    API-key:
+      name: X-Api-Key
+      type: apiKey
+      in: header
+      description: API key of the Application using the API of the Gamification Player
+security:
+  - API-key: []
+tags:
+  - name: Battles
+  - name: Challenges
+  - name: ChallengeSessions
+  - name: DeviceFlow
+  - name: Games
+  - name: MicroGames
+  - name: ModuleSessions
+  - name: Organisations
+  - name: Time
+  - name: Users

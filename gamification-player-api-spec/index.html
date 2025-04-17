@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.16.1/swagger-ui.min.css" 
+          integrity="sha512-Kz2atQ7Smbizub0WvqDX8WAG5Z1YCNtQOsNLez4b5+Es+p+2PA5NX20ClSGz1an2JE+REYa+qmt/E0dBbwzWEw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>API Documentation</title>
+</head>
+<body>
+    <div id="openapi"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.16.1/swagger-ui-bundle.min.js" 
+            integrity="sha512-XZ5dWhrv2jTMHM+C0kqBJGv1i9uYsJBm5ycrjQ0MwkL2iKVaRrP0S5xzJDcIO5tE/M3je6UNGH8BOXYVP1+8ig==" 
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        window.onload = function () {
+            const ui = SwaggerUIBundle({
+                url: './reference/GamificationPlayer.yaml',
+                dom_id: '#openapi'
+            })
+        }
+    </script>
+</body>
+</html>
