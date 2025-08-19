@@ -1440,7 +1440,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Time'
+                    $ref: '#/components/schemas/CustomTiles'
                 required:
                   - data
         '401':
@@ -2750,6 +2750,35 @@ components:
               type: string
               format: date-time
               nullable: true
+    CustomTile:
+      title: CustomTiles
+      type: object
+      x-tags:
+        - Customtiles
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - custom_tile
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            image:
+              type: string
+            url:
+              type: string
+            organisation_id:
+              type: string
+              format: uuid
+            identifier:
+              type: string
     BattleSession:
       title: Battle session
       type: object
@@ -2829,7 +2858,7 @@ tags:
   - name: Battles
   - name: Challenges
   - name: ChallengeSessions
-  - name: Custom tiles
+  - name: Customtiles
   - name: DeviceFlow
   - name: Games
   - name: MicroGames
