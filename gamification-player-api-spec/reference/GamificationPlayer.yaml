@@ -11,18 +11,12 @@ info:
     name: Proprietary
     url: 'https://games.4growth.com/contact/'
 servers:
-  - url: 'https://api.gamificationplayer.eu/v1'
-    description: Gamification Player - Staging
-  - url: 'https://api.gamificationplayer.app/v1'
-    description: Gamification Player - Production
+  - url: 'https://api.fittarplayground.it/v1'
+    description: Fittar Playground - Develop
   - url: 'https://api.fittarplayground.eu/v1'
     description: Fittar Playground - Staging
   - url: 'https://api.fittarplayground.app/v1'
     description: Fittar Playground - Production
-  - url: 'https://api.learnstrike.eu/v1'
-    description: Learnstrike - Staging
-  - url: 'https://api.learnstrike.app/v1'
-    description: Learnstrike - Production
 paths:
   /games:
     get:
