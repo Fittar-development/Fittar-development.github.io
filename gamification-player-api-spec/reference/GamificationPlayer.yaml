@@ -2783,7 +2783,7 @@ components:
       title: CustomTiles
       type: object
       x-tags:
-        - Customtiles
+        - CustomTiles
       properties:
         id:
           type: string
