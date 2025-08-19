@@ -1426,6 +1426,27 @@ paths:
           description: Unauthorized
       operationId: get-time
       description: Returns the time on the server.
+  /organisations/{organisatioId}/custom-tiles:
+    get:
+      summary: Get custom tiles
+      tags:
+        - Custom tiles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Time'
+                required:
+                  - data
+        '401':
+          description: Unauthorized
+      operationId: get-custom-tiles
+      description: Returns the custom tiles from organisation.
   /app-scores:
     post:
       summary: Post app score
@@ -2808,6 +2829,7 @@ tags:
   - name: Battles
   - name: Challenges
   - name: ChallengeSessions
+  - name: Custom tiles
   - name: DeviceFlow
   - name: Games
   - name: MicroGames
