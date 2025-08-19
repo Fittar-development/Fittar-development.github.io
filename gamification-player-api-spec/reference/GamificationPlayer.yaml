@@ -1476,6 +1476,68 @@ paths:
       parameters: []
       tags:
         - CustomTiles
+  /organisations/{organisationId}/custom-tiles/{identifier}:
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
+      - schema:
+          type: string
+        name: identifier
+        in: path
+        required: true
+        description: Identifier of the custom tile
+    get:
+      summary: Get single custom tile for organisation by tile identifier
+      operationId: get-organisation-single-custom-tile
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CustomTile'
+                required:
+                  - data
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: No custom tiles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Returns information of single custom tile of an organisation that the API key has access to.
+      parameters: []
+      tags:
+        - CustomTiles
   /app-scores:
     post:
       summary: Post app score
