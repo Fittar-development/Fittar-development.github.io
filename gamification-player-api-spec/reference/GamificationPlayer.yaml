@@ -2078,13 +2078,19 @@ components:
                 id: 8blww2wsx0cti
               nullable: true
               readOnly: true
-            background_color:
+            background_gradient_bottom:
               type: string
               x-stoplight:
                 id: 8blww2wsx0cti
               nullable: true
               readOnly: true
-            card_background_color:
+            background_gradient_top:
+              type: string
+              x-stoplight:
+                id: 8blww2wsx0cti
+              nullable: true
+              readOnly: true
+            card_backdrop:
               type: string
               x-stoplight:
                 id: 8blww2wsx0cti
