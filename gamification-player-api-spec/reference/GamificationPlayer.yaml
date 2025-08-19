@@ -1424,7 +1424,7 @@ paths:
     get:
       summary: Get custom tiles
       tags:
-        - Custom tiles
+        - CustomTiles
       responses:
         '200':
           description: OK
