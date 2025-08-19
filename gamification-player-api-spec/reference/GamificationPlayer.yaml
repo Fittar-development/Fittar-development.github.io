@@ -1426,7 +1426,7 @@ paths:
           description: Unauthorized
       operationId: get-time
       description: Returns the time on the server.
-  /organisations/{organisatioId}/custom-tiles:
+  /organisations/{organisationId}/custom-tiles:
     get:
       summary: Get custom tiles
       tags:
