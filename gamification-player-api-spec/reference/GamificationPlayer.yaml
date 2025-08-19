@@ -1421,10 +1421,17 @@ paths:
       operationId: get-time
       description: Returns the time on the server.
   /organisations/{organisationId}/custom-tiles:
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: organisationId
+        in: path
+        required: true
+        description: ID of the organisation
     get:
-      summary: Get custom tiles
-      tags:
-        - CustomTiles
+      summary: Get custom tiles for organisation
+      operationId: get-organisation-custom-tiles
       responses:
         '200':
           description: OK
@@ -1434,13 +1441,41 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/CustomTiles'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CustomTiles'
                 required:
                   - data
-        '401':
-          description: Unauthorized
-      operationId: get-custom-tiles
-      description: Returns the custom tiles from organisation.
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+        '404':
+          description: No custom tiles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+                required:
+                  - errors
+      description: Returns the custom tiles of an organisation that the API key has access to.
+      parameters: []
+      tags:
+        - CustomTiles
   /app-scores:
     post:
       summary: Post app score
